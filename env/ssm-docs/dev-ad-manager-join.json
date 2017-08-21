@@ -1,0 +1,42 @@
+{
+    "schemaVersion": "1.2",
+        "parameters":{
+        "directoryId":{
+            "type":"String",
+            "description":"(Required) Specify the id of the directory service.",
+            "minItems":1
+        },
+        "directoryName":{
+            "type":"String",
+            "description":"(Required) Specify the name of the directory.",
+            "minItems":1
+        },
+        "directoryOU":{
+            "type":"String",
+            "description":"(Required) Specify the OU you would like the server to be placed in.",
+            "minItems":1
+        },
+        "dnsIpAddresses":{
+            "type":"StringList",
+            "description":"(Required) Specify the DNS servers to use",
+            "minItems":1
+        }
+    },
+    "runtimeConfig": {
+        "aws:runPowerShellScript": {
+            "properties": [{
+                "runCommand": "Rename-Computer -NewName (invoke-restmethod -uri http://169.254.169.254/latest/meta-data/instance-id) -Force",
+                "timeoutSeconds": "30"
+            }]
+        },
+        "aws:domainJoin": {
+            "properties": {
+                "directoryId": "{{ directoryId }}",
+                "directoryName": "{{ directoryName }} ",
+                "directoryOU": "{{ directoryOU }}",
+                "dnsIpAddresses": "{{ dnsIpAddresses }}"
+            }
+        }
+    }
+
+}
